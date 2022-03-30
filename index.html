@@ -31,6 +31,10 @@
     const tileset = viewer.scene.primitives.add(
       new Cesium.Cesium3DTileset({
         url: Cesium.IonResource.fromAssetId(870179),
+        // url: '/tileset.json',
+        loadSiblings: true,
+        preloadWhenHidden: true,
+        maximumScreenSpaceError: 1,
       })
     );
 
