@@ -34,6 +34,18 @@
       })
     );
 
+    tileset.allTilesLoaded.addEventListener(function () {
+      console.log('All tiles inside screen are loaded');
+    });
+
+    tileset.loadProgress.addEventListener(function (numberOfPendingRequests, numberOfTilesProcessing) {
+      if ((numberOfPendingRequests === 0) && (numberOfTilesProcessing === 0)) {
+        console.log('Stopped loading');
+        return;
+      }
+      console.log('Loading: requests: ' + numberOfPendingRequests + ', processing: ' + numberOfTilesProcessing);
+    });
+
     (async () => {
       try {
         await tileset.readyPromise;
