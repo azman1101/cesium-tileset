@@ -25,61 +25,64 @@
     const tilesetUrl = params.get("");
     console.log(tilesetUrl);
 
-    // Your access token can be found at: https://cesium.com/ion/tokens
-    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4MWYwM2VjYS1mNmQ2LTQ3MTEtYjBhYi1kOTFjNzRjYjFkYmEiLCJpZCI6ODUyMzAsImlhdCI6MTY0Njg3NTc1NX0.eKY25OxNGtG9-0GzqOvRpVWokm9CrC8l15P7DUkAInY';
+    const setupCesium = () => {
+      // Your access token can be found at: https://cesium.com/ion/tokens, only for asset from IonResource
+      Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4MWYwM2VjYS1mNmQ2LTQ3MTEtYjBhYi1kOTFjNzRjYjFkYmEiLCJpZCI6ODUyMzAsImlhdCI6MTY0Njg3NTc1NX0.eKY25OxNGtG9-0GzqOvRpVWokm9CrC8l15P7DUkAInY';
 
-    // default home to peninsular Malaysia
-    var extent = Cesium.Rectangle.fromDegrees(99.6, 7.4, 104.8, 0.3);
-    Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent;
-    Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
+      // default home to peninsular Malaysia
+      var extent = Cesium.Rectangle.fromDegrees(99.6, 7.4, 104.8, 0.3);
+      Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent;
+      Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
 
-    // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
-    const viewer = new Cesium.Viewer('cesiumContainer', {
-      terrainProvider: Cesium.createWorldTerrain()
-    });
+      // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
+      const viewer = new Cesium.Viewer('cesiumContainer', {
+        terrainProvider: Cesium.createWorldTerrain()
+      });
 
-    const tileset = viewer.scene.primitives.add(
-      new Cesium.Cesium3DTileset({
-        url: Cesium.IonResource.fromAssetId(870179),
-        // url: '/tileset.json',
-        // url: tilesetUrl,
-        loadSiblings: true,
-        preloadWhenHidden: true,
-        maximumScreenSpaceError: 1,
-      })
-    );
+      const tileset = viewer.scene.primitives.add(
+        new Cesium.Cesium3DTileset({
+          url: Cesium.IonResource.fromAssetId(870179),
+          // url: '/tileset.json',
+          // url: tilesetUrl,
+          loadSiblings: true,
+          preloadWhenHidden: true,
+          maximumScreenSpaceError: 1,
+        })
+      );
 
-    tileset.allTilesLoaded.addEventListener(function () {
-      // console.log('All tiles inside screen are loaded');
-    });
+      tileset.allTilesLoaded.addEventListener(function () {
+        // console.log('All tiles inside screen are loaded');
+      });
 
-    tileset.loadProgress.addEventListener(function (numberOfPendingRequests, numberOfTilesProcessing) {
-      if ((numberOfPendingRequests === 0) && (numberOfTilesProcessing === 0)) {
-        // console.log('Stopped loading');
-        return;
-      }
-      // console.log('Loading: requests: ' + numberOfPendingRequests + ', processing: ' + numberOfTilesProcessing);
-    });
-
-    (async () => {
-      try {
-        await tileset.readyPromise;
-        await viewer.zoomTo(tileset);
-
-        // Apply the default style if it exists
-        var extras = tileset.asset.extras;
-        if (
-          Cesium.defined(extras) &&
-          Cesium.defined(extras.ion) &&
-          Cesium.defined(extras.ion.defaultStyle)
-        ) {
-          tileset.style = new Cesium.Cesium3DTileStyle(extras.ion.defaultStyle);
+      tileset.loadProgress.addEventListener(function (numberOfPendingRequests, numberOfTilesProcessing) {
+        if ((numberOfPendingRequests === 0) && (numberOfTilesProcessing === 0)) {
+          // console.log('Stopped loading');
+          return;
         }
-      } catch (error) {
-        console.log(error);
-      }
-    })();
+        // console.log('Loading: requests: ' + numberOfPendingRequests + ', processing: ' + numberOfTilesProcessing);
+      });
 
+      (async () => {
+        try {
+          await tileset.readyPromise;
+          await viewer.zoomTo(tileset);
+
+          // Apply the default style if it exists
+          var extras = tileset.asset.extras;
+          if (
+            Cesium.defined(extras) &&
+            Cesium.defined(extras.ion) &&
+            Cesium.defined(extras.ion.defaultStyle)
+          ) {
+            tileset.style = new Cesium.Cesium3DTileStyle(extras.ion.defaultStyle);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      })();
+    }
+
+    setupCesium();
   </script>
   </div>
 </body>
